@@ -4,7 +4,7 @@ from openai import OpenAI
 # 1. The Title & Config
 st.set_page_config(page_title="MDR Triage Bot", page_icon="🩺")
 st.title("🩺 MDR Triage & Code Predictor")
-st.write("Built by [Your Name] - Senior Vigilance Specialist")
+st.write("Built by [ARAN HUNT] - Senior Vigilance Specialist")
 
 # 2. Sidebar for API Key (Keeps it secure)
 with st.sidebar:
@@ -56,4 +56,5 @@ if st.button("Analyze Complaint"):
 
 # 4. Footer
 st.markdown("---")
+
 st.caption("Disclaimer: This is an AI demo for interview purposes. Always verify with official FDA coding manuals.")

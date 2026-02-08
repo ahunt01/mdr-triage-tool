@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "ChessLens",
+    "slug": "chesslens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "scheme": "chesslens",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0e17"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chesslens.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ChessLens needs camera access to photograph chess boards for analysis.",
+        "NSPhotoLibraryUsageDescription": "ChessLens needs photo library access to select chess board images for analysis."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0e17"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.chesslens.app",
+      "permissions": ["android.permission.CAMERA"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "ChessLens needs camera access to photograph chess boards."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ChessLens needs photo library access to select chess board images."
+        }
+      ]
+    ],
+    "extra": {
+      "anthropicApiKey": "${EXPO_PUBLIC_ANTHROPIC_API_KEY}"
+    }
+  }
+}

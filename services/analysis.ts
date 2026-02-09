@@ -1,4 +1,4 @@
-import { Chess } from 'chess.js';
+import { Chess, type Square, type PieceSymbol, type Color, type Move } from 'chess.js';
 
 export interface AnalysisMove {
   san: string;
@@ -14,175 +14,264 @@ export interface AnalysisResult {
   depth: number;
 }
 
-function uciToSan(fen: string, uciMove: string): string {
-  const chess = new Chess(fen);
-  const from = uciMove.substring(0, 2);
-  const to = uciMove.substring(2, 4);
-  const promotion = uciMove.length > 4 ? uciMove[4] : undefined;
+const PIECE_VALUES: Record<PieceSymbol, number> = {
+  p: 1,
+  n: 3.2,
+  b: 3.3,
+  r: 5,
+  q: 9,
+  k: 0,
+};
 
-  const move = chess.move({ from, to, promotion });
-  return move ? move.san : uciMove;
+const PST_PAWN: number[][] = [
+  [0,  0,  0,  0,  0,  0,  0,  0],
+  [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5],
+  [0.1,0.1,0.2,0.3,0.3,0.2,0.1,0.1],
+  [0.05,0.05,0.1,0.25,0.25,0.1,0.05,0.05],
+  [0,  0,  0,  0.2,0.2,0,  0,  0],
+  [0.05,-0.05,-0.1,0,0,-0.1,-0.05,0.05],
+  [0.05,0.1,0.1,-0.2,-0.2,0.1,0.1,0.05],
+  [0,  0,  0,  0,  0,  0,  0,  0],
+];
+
+const PST_KNIGHT: number[][] = [
+  [-0.5,-0.4,-0.3,-0.3,-0.3,-0.3,-0.4,-0.5],
+  [-0.4,-0.2,0,  0,  0,  0,  -0.2,-0.4],
+  [-0.3,0,  0.1,0.15,0.15,0.1,0,  -0.3],
+  [-0.3,0.05,0.15,0.2,0.2,0.15,0.05,-0.3],
+  [-0.3,0,  0.15,0.2,0.2,0.15,0,  -0.3],
+  [-0.3,0.05,0.1,0.15,0.15,0.1,0.05,-0.3],
+  [-0.4,-0.2,0,  0.05,0.05,0,  -0.2,-0.4],
+  [-0.5,-0.4,-0.3,-0.3,-0.3,-0.3,-0.4,-0.5],
+];
+
+const PST_BISHOP: number[][] = [
+  [-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2],
+  [-0.1,0,  0,  0,  0,  0,  0,  -0.1],
+  [-0.1,0,  0.1,0.1,0.1,0.1,0,  -0.1],
+  [-0.1,0.05,0.05,0.1,0.1,0.05,0.05,-0.1],
+  [-0.1,0,  0.1,0.1,0.1,0.1,0,  -0.1],
+  [-0.1,0.1,0.1,0.1,0.1,0.1,0.1,-0.1],
+  [-0.1,0.05,0,  0,  0,  0,  0.05,-0.1],
+  [-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2],
+];
+
+const PST_ROOK: number[][] = [
+  [0,  0,  0,  0,  0,  0,  0,  0],
+  [0.05,0.1,0.1,0.1,0.1,0.1,0.1,0.05],
+  [-0.05,0,0,  0,  0,  0,  0,  -0.05],
+  [-0.05,0,0,  0,  0,  0,  0,  -0.05],
+  [-0.05,0,0,  0,  0,  0,  0,  -0.05],
+  [-0.05,0,0,  0,  0,  0,  0,  -0.05],
+  [-0.05,0,0,  0,  0,  0,  0,  -0.05],
+  [0,  0,  0,  0.05,0.05,0,  0,  0],
+];
+
+const PST_QUEEN: number[][] = [
+  [-0.2,-0.1,-0.1,-0.05,-0.05,-0.1,-0.1,-0.2],
+  [-0.1,0,  0,  0,  0,  0,  0,  -0.1],
+  [-0.1,0,  0.05,0.05,0.05,0.05,0,  -0.1],
+  [-0.05,0,0.05,0.05,0.05,0.05,0,  -0.05],
+  [0,  0,  0.05,0.05,0.05,0.05,0,  -0.05],
+  [-0.1,0.05,0.05,0.05,0.05,0.05,0,  -0.1],
+  [-0.1,0,  0.05,0,  0,  0,  0,  -0.1],
+  [-0.2,-0.1,-0.1,-0.05,-0.05,-0.1,-0.1,-0.2],
+];
+
+const PST_KING_MID: number[][] = [
+  [-0.3,-0.4,-0.4,-0.5,-0.5,-0.4,-0.4,-0.3],
+  [-0.3,-0.4,-0.4,-0.5,-0.5,-0.4,-0.4,-0.3],
+  [-0.3,-0.4,-0.4,-0.5,-0.5,-0.4,-0.4,-0.3],
+  [-0.3,-0.4,-0.4,-0.5,-0.5,-0.4,-0.4,-0.3],
+  [-0.2,-0.3,-0.3,-0.4,-0.4,-0.3,-0.3,-0.2],
+  [-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1],
+  [0.2,0.2,0,  0,  0,  0,  0.2,0.2],
+  [0.2,0.3,0.1,0,  0,  0.1,0.3,0.2],
+];
+
+const PST_MAP: Partial<Record<PieceSymbol, number[][]>> = {
+  p: PST_PAWN,
+  n: PST_KNIGHT,
+  b: PST_BISHOP,
+  r: PST_ROOK,
+  q: PST_QUEEN,
+  k: PST_KING_MID,
+};
+
+const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+const RANKS = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+function evaluateBoard(chess: Chess): number {
+  let score = 0;
+
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const square = `${FILES[col]}${RANKS[row]}` as Square;
+      const piece = chess.get(square);
+      if (!piece) continue;
+
+      const material = PIECE_VALUES[piece.type];
+      const pst = PST_MAP[piece.type];
+      const positional = pst
+        ? piece.color === 'w'
+          ? pst[row][col]
+          : pst[7 - row][col]
+        : 0;
+
+      const value = material + positional;
+      score += piece.color === 'w' ? value : -value;
+    }
+  }
+
+  const moves = chess.moves({ verbose: true });
+  const mobilityBonus = moves.length * 0.01;
+  score += chess.turn() === 'w' ? mobilityBonus : -mobilityBonus;
+
+  if (chess.isCheck()) {
+    score += chess.turn() === 'w' ? -0.3 : 0.3;
+  }
+
+  return score;
 }
 
-class StockfishEngine {
-  private worker: Worker | null = null;
-  private resolveReady: (() => void) | null = null;
-  private currentResolve: ((result: AnalysisResult) => void) | null = null;
-  private currentReject: ((error: Error) => void) | null = null;
-  private currentFen: string = '';
-  private collectedMoves: Map<string, { score: number; mate: number | null }> =
-    new Map();
-  private lastDepth: number = 0;
-  private targetDepth: number = 15;
+function scoreMove(chess: Chess, move: Move): number {
+  let score = 0;
 
-  async init(): Promise<void> {
-    if (this.worker) return;
-
-    return new Promise<void>((resolve, reject) => {
-      try {
-        this.worker = new Worker(
-          new URL('../assets/stockfish.js', import.meta.url)
-        );
-        this.resolveReady = resolve;
-        this.worker.onmessage = this.handleMessage.bind(this);
-        this.worker.onerror = (e) => {
-          reject(new Error(`Stockfish failed to load: ${e.message}`));
-        };
-        this.sendCommand('uci');
-      } catch (e) {
-        reject(
-          new Error(
-            'Stockfish engine not available. Analysis requires the stockfish.js worker.'
-          )
-        );
-      }
-    });
+  if (move.captured) {
+    const victimVal = PIECE_VALUES[move.captured as PieceSymbol] ?? 0;
+    const attackerVal = PIECE_VALUES[move.piece as PieceSymbol] ?? 0;
+    score += 10 * victimVal - attackerVal;
   }
 
-  private sendCommand(cmd: string): void {
-    this.worker?.postMessage(cmd);
+  if (move.promotion) {
+    score += PIECE_VALUES[move.promotion as PieceSymbol] ?? 0;
   }
 
-  private handleMessage(event: MessageEvent): void {
-    const line = typeof event.data === 'string' ? event.data : '';
-
-    if (line === 'uciok' && this.resolveReady) {
-      this.sendCommand('isready');
-      return;
-    }
-
-    if (line === 'readyok' && this.resolveReady) {
-      this.resolveReady();
-      this.resolveReady = null;
-      return;
-    }
-
-    if (line.startsWith('info') && line.includes('multipv')) {
-      this.parseInfoLine(line);
-    }
-
-    if (line.startsWith('bestmove') && this.currentResolve) {
-      const bestMoves: AnalysisMove[] = [];
-      const sorted = [...this.collectedMoves.entries()].sort(
-        (a, b) => b[1].score - a[1].score
-      );
-
-      for (const [uci, data] of sorted.slice(0, 3)) {
-        bestMoves.push({
-          uci,
-          san: uciToSan(this.currentFen, uci),
-          score: data.score,
-          mate: data.mate,
-        });
-      }
-
-      const topMove = bestMoves[0];
-      this.currentResolve({
-        evaluation: topMove?.score ?? 0,
-        mate: topMove?.mate ?? null,
-        bestMoves,
-        depth: this.lastDepth,
-      });
-      this.currentResolve = null;
-      this.currentReject = null;
-    }
+  if (move.san.includes('+')) {
+    score += 2;
   }
 
-  private parseInfoLine(line: string): void {
-    const depthMatch = line.match(/\bdepth (\d+)/);
-    const pvMatch = line.match(/\bmultipv (\d+)/);
-    const scoreMatch = line.match(/\bscore (cp|mate) (-?\d+)/);
-    const movesMatch = line.match(/\bpv (.+)/);
+  return score;
+}
 
-    if (!depthMatch || !pvMatch || !scoreMatch || !movesMatch) return;
-
-    const depth = parseInt(depthMatch[1], 10);
-    const scoreType = scoreMatch[1];
-    const scoreValue = parseInt(scoreMatch[2], 10);
-    const firstMove = movesMatch[1].split(' ')[0];
-
-    this.lastDepth = depth;
-
-    const score = scoreType === 'mate' ? 0 : scoreValue / 100;
-    const mate = scoreType === 'mate' ? scoreValue : null;
-
-    if (depth >= this.targetDepth - 2) {
-      this.collectedMoves.set(firstMove, { score, mate });
+function searchPosition(
+  chess: Chess,
+  depth: number,
+  alpha: number,
+  beta: number,
+  maximizing: boolean
+): number {
+  if (depth === 0 || chess.isGameOver()) {
+    if (chess.isCheckmate()) {
+      return maximizing ? -999 : 999;
     }
+    if (chess.isDraw() || chess.isStalemate()) {
+      return 0;
+    }
+    return evaluateBoard(chess);
   }
 
-  async analyze(fen: string, depth: number = 15): Promise<AnalysisResult> {
-    if (!this.worker) {
-      await this.init();
+  const moves = chess.moves({ verbose: true });
+  moves.sort((a, b) => scoreMove(chess, b) - scoreMove(chess, a));
+
+  if (maximizing) {
+    let maxEval = -Infinity;
+    for (const move of moves) {
+      chess.move(move);
+      const eval_ = searchPosition(chess, depth - 1, alpha, beta, false);
+      chess.undo();
+      maxEval = Math.max(maxEval, eval_);
+      alpha = Math.max(alpha, eval_);
+      if (beta <= alpha) break;
     }
-
-    return new Promise<AnalysisResult>((resolve, reject) => {
-      this.currentResolve = resolve;
-      this.currentReject = reject;
-      this.currentFen = fen;
-      this.collectedMoves.clear();
-      this.lastDepth = 0;
-      this.targetDepth = depth;
-
-      this.sendCommand('stop');
-      this.sendCommand('ucinewgame');
-      this.sendCommand(`position fen ${fen}`);
-      this.sendCommand('setoption name MultiPV value 3');
-      this.sendCommand(`go depth ${depth}`);
-
-      setTimeout(() => {
-        if (this.currentReject) {
-          this.currentReject(
-            new Error('Analysis timed out. Try a lower depth.')
-          );
-          this.currentResolve = null;
-          this.currentReject = null;
-        }
-      }, 30000);
-    });
-  }
-
-  destroy(): void {
-    this.worker?.terminate();
-    this.worker = null;
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (const move of moves) {
+      chess.move(move);
+      const eval_ = searchPosition(chess, depth - 1, alpha, beta, true);
+      chess.undo();
+      minEval = Math.min(minEval, eval_);
+      beta = Math.min(beta, eval_);
+      if (beta <= alpha) break;
+    }
+    return minEval;
   }
 }
 
-let engineInstance: StockfishEngine | null = null;
-
-export function getEngine(): StockfishEngine {
-  if (!engineInstance) {
-    engineInstance = new StockfishEngine();
-  }
-  return engineInstance;
-}
+const DEPTH_MAP: Record<number, number> = {
+  10: 2,
+  15: 3,
+  20: 4,
+};
 
 export async function analyzePosition(
   fen: string,
   depth: number = 15
 ): Promise<AnalysisResult> {
-  const engine = getEngine();
-  return engine.analyze(fen, depth);
+  const chess = new Chess(fen);
+  const isWhiteTurn = chess.turn() === 'w';
+  const searchDepth = DEPTH_MAP[depth] ?? 3;
+
+  if (chess.isCheckmate()) {
+    return {
+      evaluation: 0,
+      mate: isWhiteTurn ? -0 : 0,
+      bestMoves: [],
+      depth: searchDepth,
+    };
+  }
+
+  if (chess.isGameOver()) {
+    return { evaluation: 0, mate: null, bestMoves: [], depth: searchDepth };
+  }
+
+  const moves = chess.moves({ verbose: true });
+  moves.sort((a, b) => scoreMove(chess, b) - scoreMove(chess, a));
+
+  const scored: { move: Move; eval_: number }[] = [];
+
+  for (const move of moves) {
+    chess.move(move);
+    const eval_ = searchPosition(
+      chess,
+      searchDepth - 1,
+      -Infinity,
+      Infinity,
+      !isWhiteTurn
+    );
+    chess.undo();
+    scored.push({ move, eval_: eval_ });
+  }
+
+  scored.sort((a, b) =>
+    isWhiteTurn ? b.eval_ - a.eval_ : a.eval_ - b.eval_
+  );
+
+  const bestMoves: AnalysisMove[] = scored.slice(0, 3).map((entry) => {
+    const mate =
+      entry.eval_ >= 900
+        ? Math.ceil((searchDepth - entry.eval_ + 999) / 2) || 1
+        : entry.eval_ <= -900
+          ? -(Math.ceil((searchDepth + entry.eval_ + 999) / 2) || 1)
+          : null;
+
+    return {
+      san: entry.move.san,
+      uci: `${entry.move.from}${entry.move.to}${entry.move.promotion ?? ''}`,
+      score: Math.round(entry.eval_ * 10) / 10,
+      mate,
+    };
+  });
+
+  const topMove = bestMoves[0];
+
+  return {
+    evaluation: topMove?.score ?? 0,
+    mate: topMove?.mate ?? null,
+    bestMoves,
+    depth: searchDepth,
+  };
 }
 
 export function formatScore(evaluation: number, mate: number | null): string {

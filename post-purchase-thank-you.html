@@ -39,15 +39,15 @@
 
   <!-- Header -->
   <tr>
-    <td style="padding:30px 40px;text-align:center;border-bottom:2px solid #E8F0E0;" class="mobile-padding">
-      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+    <td align="center" style="padding:30px 40px;text-align:center;border-bottom:2px solid #E8F0E0;" class="mobile-padding">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
-          <td style="text-align:center;">
+          <td align="center" style="text-align:center;">
             <span style="font-family:Georgia,'Times New Roman',Times,serif;font-size:28px;font-weight:bold;color:#2D5016;letter-spacing:3px;">VERIDIAN</span>
           </td>
         </tr>
         <tr>
-          <td style="text-align:center;padding-top:6px;">
+          <td align="center" style="text-align:center;padding-top:6px;">
             <span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#7BA05B;letter-spacing:1px;font-style:italic;">Your body already knows the way.</span>
           </td>
         </tr>
@@ -57,23 +57,23 @@
 
   <!-- Confirmation Hero -->
   <tr>
-    <td style="padding:40px 40px 20px;text-align:center;" class="mobile-padding">
+    <td align="center" style="padding:40px 40px 20px;text-align:center;" class="mobile-padding">
       <!-- Green Checkmark Circle -->
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
         <tr>
-          <td style="width:64px;height:64px;background-color:#2D5016;border-radius:50%;text-align:center;line-height:64px;">
+          <td align="center" style="width:64px;height:64px;background-color:#2D5016;border-radius:50%;text-align:center;line-height:64px;">
             <span style="font-size:30px;color:#ffffff;">&#10003;</span>
           </td>
         </tr>
       </table>
-      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
         <tr>
-          <td style="padding-top:18px;text-align:center;font-family:Georgia,'Times New Roman',Times,serif;font-size:26px;font-weight:bold;color:#2D5016;line-height:34px;">
+          <td align="center" style="padding-top:18px;text-align:center;font-family:Georgia,'Times New Roman',Times,serif;font-size:26px;font-weight:bold;color:#2D5016;line-height:34px;">
             Order Confirmed
           </td>
         </tr>
         <tr>
-          <td style="padding-top:6px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#7BA05B;">
+          <td align="center" style="padding-top:6px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#7BA05B;">
             Your journey starts now
           </td>
         </tr>
@@ -95,7 +95,7 @@
 
   <!-- Order Summary Box -->
   <tr>
-    <td style="padding:0 40px 25px;" class="mobile-padding">
+    <td style="padding:0 40px 30px;" class="mobile-padding">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#E8F0E0;border-radius:8px;">
         <tr>
           <td style="padding:20px 25px 12px;">
@@ -104,7 +104,7 @@
                 <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#2D5016;text-transform:uppercase;letter-spacing:1px;">
                   Order {{ order.name }}
                 </td>
-                <td style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#3D2B1F;text-align:right;">
+                <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#3D2B1F;text-align:right;">
                   {{ order.created_at | date: "%B %d, %Y" }}
                 </td>
               </tr>
@@ -122,7 +122,7 @@
                         Veridian GLP-1 Metabolic Support<br>
                         <span style="font-size:13px;color:#7BA05B;">Berberine HCl 97% &bull; 60 Capsules &bull; 30-Day Supply</span>
                       </td>
-                      <td style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#3D2B1F;text-align:right;vertical-align:top;white-space:nowrap;">
+                      <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#3D2B1F;text-align:right;vertical-align:top;white-space:nowrap;">
                         $54.99
                       </td>
                     </tr>
@@ -139,7 +139,7 @@
                 <td style="padding:10px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#7BA05B;font-weight:bold;">
                   Shipping
                 </td>
-                <td style="padding:10px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#7BA05B;font-weight:bold;text-align:right;">
+                <td align="right" style="padding:10px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#7BA05B;font-weight:bold;text-align:right;">
                   FREE
                 </td>
               </tr>
@@ -153,7 +153,7 @@
                 <td style="padding:12px 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:18px;font-weight:bold;color:#2D5016;">
                   Total
                 </td>
-                <td style="padding:12px 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:18px;font-weight:bold;color:#2D5016;text-align:right;">
+                <td align="right" style="padding:12px 0;font-family:Georgia,'Times New Roman',Times,serif;font-size:18px;font-weight:bold;color:#2D5016;text-align:right;">
                   {{ order.total_price | money }}
                 </td>
               </tr>
@@ -166,10 +166,10 @@
 
   <!-- Delivery Timeline -->
   <tr>
-    <td style="padding:0 40px 10px;" class="mobile-padding">
+    <td style="padding:0 40px 15px;" class="mobile-padding">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
         <tr>
-          <td style="padding-bottom:15px;font-family:Georgia,'Times New Roman',Times,serif;font-size:20px;font-weight:bold;color:#2D5016;">
+          <td style="font-family:Georgia,'Times New Roman',Times,serif;font-size:20px;font-weight:bold;color:#2D5016;">
             Delivery Timeline
           </td>
         </tr>
@@ -187,7 +187,7 @@
                 <td width="36" valign="top">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                      <td style="width:28px;height:28px;background-color:#2D5016;border-radius:50%;text-align:center;line-height:28px;">
+                      <td align="center" style="width:28px;height:28px;background-color:#2D5016;border-radius:50%;text-align:center;line-height:28px;">
                         <span style="font-size:14px;color:#ffffff;">&#10003;</span>
                       </td>
                     </tr>
@@ -219,7 +219,7 @@
                 <td width="36" valign="top">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                      <td style="width:28px;height:28px;background-color:#E8F0E0;border-radius:50%;text-align:center;line-height:28px;">
+                      <td align="center" style="width:28px;height:28px;background-color:#E8F0E0;border-radius:50%;text-align:center;line-height:28px;">
                         <span style="font-size:11px;color:#7BA05B;">&#9679;</span>
                       </td>
                     </tr>
@@ -251,7 +251,7 @@
                 <td width="36" valign="top">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                      <td style="width:28px;height:28px;background-color:#E8F0E0;border-radius:50%;text-align:center;line-height:28px;">
+                      <td align="center" style="width:28px;height:28px;background-color:#E8F0E0;border-radius:50%;text-align:center;line-height:28px;">
                         <span style="font-size:11px;color:#7BA05B;">&#9679;</span>
                       </td>
                     </tr>
@@ -283,7 +283,7 @@
                 <td width="36" valign="top">
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                      <td style="width:28px;height:28px;background-color:#E8F0E0;border-radius:50%;text-align:center;line-height:28px;">
+                      <td align="center" style="width:28px;height:28px;background-color:#E8F0E0;border-radius:50%;text-align:center;line-height:28px;">
                         <span style="font-size:11px;color:#7BA05B;">&#9679;</span>
                       </td>
                     </tr>
@@ -395,10 +395,10 @@
 
   <!-- CTA Button -->
   <tr>
-    <td style="padding:0 40px 40px;text-align:center;" class="mobile-padding">
+    <td align="center" style="padding:0 40px 30px;text-align:center;" class="mobile-padding">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
         <tr>
-          <td style="border-radius:4px;background:#2D5016;text-align:center;">
+          <td align="center" style="border-radius:4px;background:#2D5016;text-align:center;">
             <!--[if mso]>
             <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://tryveridian.com" style="height:52px;v-text-anchor:middle;width:260px;" arcsize="8%" strokecolor="#2D5016" fillcolor="#2D5016">
             <w:anchorlock/>
@@ -430,12 +430,12 @@
           </td>
         </tr>
         <tr>
-          <td style="padding:25px 40px 0;text-align:center;" class="mobile-padding">
+          <td align="center" style="padding:25px 40px 0;text-align:center;" class="mobile-padding">
             <span style="font-family:Georgia,'Times New Roman',Times,serif;font-size:20px;font-weight:bold;color:#2D5016;letter-spacing:3px;">VERIDIAN</span>
           </td>
         </tr>
         <tr>
-          <td style="padding:15px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;" class="mobile-padding">
+          <td align="center" style="padding:15px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;" class="mobile-padding">
             <a href="https://tryveridian.com/collections" style="color:#3D2B1F;text-decoration:underline;">Shop</a> &nbsp;&nbsp;&#124;&nbsp;&nbsp;
             <a href="https://tryveridian.com/pages/science" style="color:#3D2B1F;text-decoration:underline;">The Science</a> &nbsp;&nbsp;&#124;&nbsp;&nbsp;
             <a href="https://tryveridian.com/pages/faq" style="color:#3D2B1F;text-decoration:underline;">FAQ</a> &nbsp;&nbsp;&#124;&nbsp;&nbsp;
@@ -443,22 +443,22 @@
           </td>
         </tr>
         <tr>
-          <td style="padding:20px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#999999;" class="mobile-padding">
+          <td align="center" style="padding:20px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#999999;" class="mobile-padding">
             &copy; 2026 Veridian. All rights reserved. A ZeroDay Labs brand.
           </td>
         </tr>
         <tr>
-          <td style="padding:15px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999999;line-height:16px;" class="mobile-padding">
+          <td align="center" style="padding:15px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999999;line-height:16px;" class="mobile-padding">
             *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease.
           </td>
         </tr>
         <tr>
-          <td style="padding:15px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999999;" class="mobile-padding">
+          <td align="center" style="padding:15px 40px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999999;" class="mobile-padding">
             <a href="{{ unsubscribe_url }}" style="color:#999999;text-decoration:underline;">Unsubscribe</a>
           </td>
         </tr>
         <tr>
-          <td style="padding:10px 40px 30px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999999;" class="mobile-padding">
+          <td align="center" style="padding:10px 40px 30px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#999999;" class="mobile-padding">
             [Your Business Address]
           </td>
         </tr>
